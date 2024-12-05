@@ -37,7 +37,7 @@ def create_keys() -> ThingItemKeys:
     key = '{}#{}'.format(COLLECTION_NAME, str(uuid()))
     return ThingItemKeys(**{'pk': key, 'sk': key})
 
-def get_keys_from_id_from_id(_id: str) -> ThingItemKeys:
+def get_keys_from_id(_id: str) -> ThingItemKeys:
     '''Get keys for DDB'''
     key = '{}#{}'.format(COLLECTION_NAME, _id)
     return ThingItemKeys(**{'pk': key, 'sk': key})
