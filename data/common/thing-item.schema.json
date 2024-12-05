@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "allOf": [
+        {
+            "$ref": "#/$defs/ThingData"
+        }
+    ],
+    "properties": {
+        "pk": {
+            "type": "string"
+        },
+        "sk": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "pk",
+        "sk",
+        "id"
+    ],
+    "$defs": {
+        "ThingData": {
+            "$schema": "file:data/common/thing-data.schema.json"
+        }
+    }
+}

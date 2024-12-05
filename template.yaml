@@ -1,0 +1,191 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: |
+  Test thing
+
+Parameters:
+  Domain:
+    Type: String
+    Description: 'Application Platform'
+
+  System:
+    Type: String
+    Description: 'Application System'
+
+  Component:
+    Type: String
+    Description: 'Application Component'
+
+  CodeBranch:
+    Type: String
+    Description: "Name of deployment branch"
+
+  Hostname:
+    Type: String
+    Description: Site FQDN
+
+  DnsZoneId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Route53 Hosted Zone ID
+
+  CognitoUserPoolArn:
+    Type: String
+    Description: Cognito User Pool ARN
+
+
+Globals:
+  Function:
+    Runtime: python3.13
+    Timeout: 5
+    MemorySize: 128
+    Environment:
+      Variables:
+        DDB_TABLE_NAME: !Ref DdbTable
+        POWERTOOLS_SERVICE_NAME: !Ref AWS::StackName
+
+
+Resources:
+  # DDB
+  DdbTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  # Functions
+  CreateThingItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/handlers/CreateThingItem
+      Handler: function.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DdbTable
+
+  CreateThingItemFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt CreateThingItemFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+
+
+  UpsertThingItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/handlers/UpsertThingItem
+      Handler: function.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DdbTable
+
+  UpsertThingItemFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt UpsertThingItemFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+
+
+  GetThingItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/handlers/GetThingItem
+      Handler: function.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DdbTable
+
+  GetThingItemFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetThingItemFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+
+
+  DeleteThingItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/handlers/DeleteThingItem
+      Handler: function.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DdbTable
+
+  DeleteThingItemFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteThingItemFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+
+  # APIG
+  SiteCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref Hostname
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref Hostname
+          HostedZoneId: !Ref DnsZoneId
+
+  RestApiIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ApiGatewayPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                Resource: !GetAtt DdbTable.Arn
+
+  RestApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/api-gateway/${AWS::StackName}"
+      RetentionInDays: 7
+
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref CodeBranch
+      Domain:
+        DomainName: !Ref Hostname
+        CertificateArn: !Ref SiteCertificate
+        Route53:
+          HostedZoneId: !Ref DnsZoneId
+        EndpointConfiguration: REGIONAL
+      AccessLogSetting:
+        DestinationArn: !GetAtt RestApiLogGroup.Arn
+        Format: '$context.extendedRequestId $context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          LoggingLevel: INFO
+          MetricsEnabled: true
+          DataTraceEnabled: false
+      DefinitionBody:
+        Fn::Transform:
+          Name: "AWS::Include"
+          Parameters:
+            Location: "openapi.yaml"

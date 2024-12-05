@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+
+[default.deploy]
+
+[default.deploy.parameters]
+stack_name = "test-thing-py"
+confirm_changeset = false
+capabilities = "CAPABILITY_NAMED_IAM"

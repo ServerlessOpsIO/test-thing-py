@@ -1,0 +1,270 @@
+---
+openapi: 3.0.3
+info:
+  title: test-thing-py
+  description: |
+    Thing API
+    
+    Manage things
+  version: 1.0.0
+servers:
+  - url:
+      Fn::Sub: "https://${Hostname}"
+    description: Production endpoint
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+x-amazon-apigateway-request-validator: "all"
+
+paths:
+  "/health":
+    get:
+      summary: Health check
+      description: Get health of endpoint
+      parameters:
+        - $ref: "#/components/parameters/headerContentTypeJson"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheckResponse"
+      security:
+        - serverlessOpsCognitoPool:
+          - Fn::Sub: https://${Hostname}/health.read
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          "application/json": |
+            {
+              "statusCode": 200
+            }
+        responses:
+          "200":
+            statusCode: 200
+            responseTemplates:
+              "application/json": |
+                {
+                  "healthy": true
+                }
+
+  "/v1/thing":
+    post:
+      summary: Create
+      description: Create thing item
+      parameters:
+        - $ref: "#/components/parameters/headerContentTypeJson"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ThingItem"
+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateThingResponse"
+        '400':
+          description: Client failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Server failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - serverlessOpsCognitoPool:
+          - Fn::Sub: https://${Hostname}/thing.write
+      x-amazon-apigateway-integration:
+        type: AWS_PROXY
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateThingItemFunction.Arn}/invocations"
+
+  "/v1/thing/{id}":
+    get:
+      summary: Get
+      description: Get thing item
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/headerContentTypeJson"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThingItem"
+        '400':
+          description: Client failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Server failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - serverlessOpsCognitoPool:
+          - Fn::Sub: https://${Hostname}/thing.read
+      x-amazon-apigateway-integration:
+        type: AWS_PROXY
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetThingItemFunction.Arn}/invocations"
+    delete:
+      summary: Delete
+      description: Delete thing item
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/headerContentTypeJson"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestIdResponse"
+        '400':
+          description: Client failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Server failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - serverlessOpsCognitoPool:
+          - Fn::Sub: https://${Hostname}/thing.write
+      x-amazon-apigateway-integration:
+        type: AWS_PROXY
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteThingItemFunction.Arn}/invocations"
+    put:
+      summary: Update
+      description: Update thing item
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/headerContentTypeJson"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ThingItem"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestIdResponse"
+        '400':
+          description: Client failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Server failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - serverlessOpsCognitoPool:
+          - Fn::Sub: https://${Hostname}/thing.write
+      x-amazon-apigateway-integration:
+        type: AWS_PROXY
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpsertThingItemFunction.Arn}/invocations"
+
+components:
+  schemas:
+    ThingItem:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+      additionalProperties: true
+    CreateThingResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+      required:
+        - id
+    EmptyResponse:
+      type: object
+    RequestIdResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+      required:
+        - request_id
+    ErrorResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+      required:
+        - message
+    HealthCheckResponse:
+      type: object
+      properties:
+        healthy:
+          type: boolean
+      required:
+        - healthy
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      description: Item ID
+      schema:
+        type: string
+    headerContentTypeJson:
+      name: Content-Type
+      in: header
+      schema:
+        type: string
+        default: application/json; charset=utf-8
+  securitySchemes:
+    serverlessOpsCognitoPool:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: COGNITO_USER_POOLS
+      x-amazon-apigateway-authorizer:
+        type: COGNITO_USER_POOLS
+        providerARNs:
+          - Ref: CognitoUserPoolArn
+        identitySource: method.request.header.Authorization
+        # Not sure why this breaks requests. Leaving this here as a note to not enable this
+        # configuration.
+        #identityValidationExpression: "^Bearer [^\\s]+$"

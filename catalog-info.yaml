@@ -1,0 +1,32 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: test-thing-py
+  description: Test thing
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/test-thing-py
+spec:
+  type: api
+  lifecycle: production
+  owner: group:backstage
+  system: system:backstage
+  providesApis:
+    - resource:test-thing-py
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: test-thing-py
+  description: |
+    Thing API
+    
+    Manage things
+spec:
+  type: openapi
+  system: system:backstage
+  lifecycle: production
+  owner: group:backstage
+  definition:
+    $text: https://github.com/ServerlessOpsIO/test-thing-py/blob/main/openapi.yaml

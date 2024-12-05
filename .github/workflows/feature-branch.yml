@@ -1,0 +1,74 @@
+name: Feature Branch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/*
+      - fix/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Setup job workspace
+        uses: ServerlessOpsIO/gha-setup-workspace@v1
+
+      - name: Setup Python environment
+        uses: ServerlessOpsIO/gha-setup-python@v1
+        with:
+          python_version: '3.13'
+
+      - name: Run tests
+        run: pipenv run test-unit
+
+      - name: Assume AWS credentials
+        uses: ServerlessOpsIO/gha-assume-aws-credentials@v1
+        with:
+          build_aws_account_id: ${{ secrets.AWS_CICD_ACCOUNT_ID }}
+
+      - name: Install AWS SAM
+        uses: aws-actions/setup-sam@v2
+
+      - name: Validate template
+        run: sam validate --lint
+
+      - name: Build deployment artifact
+        run: sam build
+
+      - name: Store artifacts
+        uses: ServerlessOpsIO/gha-store-artifacts@v1
+        with:
+          use_aws_sam: true
+
+  deploy:
+    needs:
+      - build
+
+    environment: production
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Setup job workspace
+        uses: ServerlessOpsIO/gha-setup-workspace@v1
+        with:
+          checkout_artifact: true
+
+      - name: Assume AWS credentials
+        uses: ServerlessOpsIO/gha-assume-aws-credentials@v1
+        with:
+          build_aws_account_id: ${{ secrets.AWS_CICD_ACCOUNT_ID }}
+          deploy_aws_account_id: ${{ secrets.DEPLOYMENT_ACCOUNT_ID }}
+
+      - name: Deploy via AWS SAM
+        uses: ServerlessOpsIO/gha-deploy-aws-sam@v1
+        with:
+          aws_account_id: ${{ secrets.DEPLOYMENT_ACCOUNT_ID }}
+          env_json: ${{ toJson(env) }}
+          secrets_json: ${{ toJson(secrets) }}

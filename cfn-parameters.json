@@ -1,0 +1,9 @@
+{
+    "Domain": "devtools",
+    "System": "backstage",
+    "Component": $env.GITHUB_REPOSITORY_NAME_PART_SLUG_CS,
+    "CodeBranch": $env.GITHUB_REF_SLUG_CS,
+	"Hostname": "api.thing-py.backstage.serverlessops.io",
+	"DnsZoneId": "/org/dns/ZoneId",
+    "CognitoUserPoolArn": $secrets.COGNITO_USER_POOL_ARN
+}

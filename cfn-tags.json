@@ -1,0 +1,5 @@
+{
+  "org:domain": "devtools",
+  "org:system": "backstage",
+  "org:component": $env.GITHUB_REPOSITORY_NAME_PART_SLUG_CS
+}

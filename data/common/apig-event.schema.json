@@ -1,0 +1,394 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "body": {
+            "type": "string"
+        },
+        "resource": {
+            "type": "string"
+        },
+        "path": {
+            "type": "string"
+        },
+        "httpMethod": {
+            "type": "string"
+        },
+        "isBase64Encoded": {
+            "type": "boolean"
+        },
+        "queryStringParameters": {
+            "type": "object",
+            "properties": {
+                "foo": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "foo"
+            ]
+        },
+        "multiValueQueryStringParameters": {
+            "type": "object",
+            "properties": {
+                "foo": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "foo"
+            ]
+        },
+        "pathParameters": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "stageVariables": {
+            "type": "object",
+            "properties": {
+                "baz": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "baz"
+            ]
+        },
+        "headers": {
+            "type": "object",
+            "properties": {
+                "Accept": {
+                    "type": "string"
+                },
+                "Accept-Encoding": {
+                    "type": "string"
+                },
+                "Accept-Language": {
+                    "type": "string"
+                },
+                "Cache-Control": {
+                    "type": "string"
+                },
+                "CloudFront-Forwarded-Proto": {
+                    "type": "string"
+                },
+                "CloudFront-Is-Desktop-Viewer": {
+                    "type": "string"
+                },
+                "CloudFront-Is-Mobile-Viewer": {
+                    "type": "string"
+                },
+                "CloudFront-Is-SmartTV-Viewer": {
+                    "type": "string"
+                },
+                "CloudFront-Is-Tablet-Viewer": {
+                    "type": "string"
+                },
+                "CloudFront-Viewer-Country": {
+                    "type": "string"
+                },
+                "Host": {
+                    "type": "string"
+                },
+                "Upgrade-Insecure-Requests": {
+                    "type": "string"
+                },
+                "User-Agent": {
+                    "type": "string"
+                },
+                "Via": {
+                    "type": "string"
+                },
+                "X-Amz-Cf-Id": {
+                    "type": "string"
+                },
+                "X-Forwarded-For": {
+                    "type": "string"
+                },
+                "X-Forwarded-Port": {
+                    "type": "string"
+                },
+                "X-Forwarded-Proto": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Accept",
+                "Accept-Encoding",
+                "Accept-Language",
+                "Cache-Control",
+                "CloudFront-Forwarded-Proto",
+                "CloudFront-Is-Desktop-Viewer",
+                "CloudFront-Is-Mobile-Viewer",
+                "CloudFront-Is-SmartTV-Viewer",
+                "CloudFront-Is-Tablet-Viewer",
+                "CloudFront-Viewer-Country",
+                "Host",
+                "Upgrade-Insecure-Requests",
+                "User-Agent",
+                "Via",
+                "X-Amz-Cf-Id",
+                "X-Forwarded-For",
+                "X-Forwarded-Port",
+                "X-Forwarded-Proto"
+            ]
+        },
+        "multiValueHeaders": {
+            "type": "object",
+            "properties": {
+                "Accept": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Accept-Encoding": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Accept-Language": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Cache-Control": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "CloudFront-Forwarded-Proto": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "CloudFront-Is-Desktop-Viewer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "CloudFront-Is-Mobile-Viewer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "CloudFront-Is-SmartTV-Viewer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "CloudFront-Is-Tablet-Viewer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "CloudFront-Viewer-Country": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Host": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Upgrade-Insecure-Requests": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "User-Agent": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Via": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "X-Amz-Cf-Id": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "X-Forwarded-For": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "X-Forwarded-Port": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "X-Forwarded-Proto": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "Accept",
+                "Accept-Encoding",
+                "Accept-Language",
+                "Cache-Control",
+                "CloudFront-Forwarded-Proto",
+                "CloudFront-Is-Desktop-Viewer",
+                "CloudFront-Is-Mobile-Viewer",
+                "CloudFront-Is-SmartTV-Viewer",
+                "CloudFront-Is-Tablet-Viewer",
+                "CloudFront-Viewer-Country",
+                "Host",
+                "Upgrade-Insecure-Requests",
+                "User-Agent",
+                "Via",
+                "X-Amz-Cf-Id",
+                "X-Forwarded-For",
+                "X-Forwarded-Port",
+                "X-Forwarded-Proto"
+            ]
+        },
+        "requestContext": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "string"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "stage": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "requestTime": {
+                    "type": "string"
+                },
+                "requestTimeEpoch": {
+                    "type": "integer"
+                },
+                "identity": {
+                    "type": "object",
+                    "properties": {
+                        "cognitoIdentityPoolId": {
+                            "type": "null"
+                        },
+                        "accountId": {
+                            "type": "null"
+                        },
+                        "cognitoIdentityId": {
+                            "type": "null"
+                        },
+                        "caller": {
+                            "type": "null"
+                        },
+                        "accessKey": {
+                            "type": "null"
+                        },
+                        "sourceIp": {
+                            "type": "string"
+                        },
+                        "cognitoAuthenticationType": {
+                            "type": "null"
+                        },
+                        "cognitoAuthenticationProvider": {
+                            "type": "null"
+                        },
+                        "userArn": {
+                            "type": "null"
+                        },
+                        "userAgent": {
+                            "type": "string"
+                        },
+                        "user": {
+                            "type": "null"
+                        }
+                    },
+                    "required": [
+                        "accessKey",
+                        "accountId",
+                        "caller",
+                        "cognitoAuthenticationProvider",
+                        "cognitoAuthenticationType",
+                        "cognitoIdentityId",
+                        "cognitoIdentityPoolId",
+                        "sourceIp",
+                        "user",
+                        "userAgent",
+                        "userArn"
+                    ]
+                },
+                "path": {
+                    "type": "string"
+                },
+                "resourcePath": {
+                    "type": "string"
+                },
+                "httpMethod": {
+                    "type": "string"
+                },
+                "apiId": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "accountId",
+                "apiId",
+                "httpMethod",
+                "identity",
+                "path",
+                "protocol",
+                "requestId",
+                "requestTime",
+                "requestTimeEpoch",
+                "resourceId",
+                "resourcePath",
+                "stage"
+            ]
+        }
+    },
+    "required": [
+        "body",
+        "headers",
+        "httpMethod",
+        "isBase64Encoded",
+        "multiValueHeaders",
+        "multiValueQueryStringParameters",
+        "path",
+        "pathParameters",
+        "queryStringParameters",
+        "requestContext",
+        "resource",
+        "stageVariables"
+    ]
+}
