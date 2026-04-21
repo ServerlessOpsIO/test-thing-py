@@ -5,7 +5,7 @@ import json
 import jsonschema
 import os
 from types import ModuleType
-from typing import cast, Generator, Tuple
+from typing import Generator
 
 import pytest
 from pytest_mock import MockerFixture
@@ -17,7 +17,6 @@ from aws_lambda_powertools.utilities.data_classes import APIGatewayProxyEvent
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from common.model.thing import ThingData, ThingItemKeys
-from common.test.aws import create_lambda_function_context
 
 from src.handlers.CreateThingItem.function import Output, ResponseBody
 
@@ -36,9 +35,9 @@ RESPONSE_SCHEMA = os.path.join(FUNC_DATA_DIR, 'response.schema.json')
 
 ### Fixtures
 @pytest.fixture()
-def mock_context(function_name=FN_NAME):
+def mock_context(lambda_function_context, function_name=FN_NAME):
     '''context object'''
-    return create_lambda_function_context(function_name)
+    return lambda_function_context(function_name)
 
 # Data
 @pytest.fixture()
