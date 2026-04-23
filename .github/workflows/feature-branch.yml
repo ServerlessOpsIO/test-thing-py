@@ -40,7 +40,7 @@ jobs:
         run: sam build
 
       - name: Store artifacts
-        uses: ServerlessOpsIO/gha-store-artifacts@v2
+        uses: ServerlessOpsIO/gha-store-artifacts@feature/actions-update
         with:
           use_aws_sam: true
 
