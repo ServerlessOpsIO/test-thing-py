@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Setup job workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v2
+        uses: ServerlessOpsIO/gha-setup-workspace@feature/actions-update
         with:
           checkout_artifact: true
 
